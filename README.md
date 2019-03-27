@@ -22,20 +22,20 @@ It can help you extract/compress almost of archive file type.
 ### Fast extract
 
 ```cpp
-  // Create multi-thread hard disk extractor
-  auto extractor = new QArchive::DiskExtractor(this);
-  extractor->setArchiveFileName(fileName);
-  extractor->setOutputPath(QDir::currentPath());
-  extractor->start();
+// Create multi-thread hard disk extractor
+auto extractor = new QArchive::DiskExtractor(this);
+extractor->setArchiveFileName(fileName);
+extractor->setOutputPath(QDir::currentPath());
+extractor->start();
 ```
 
 ### Signals
 
 ```cpp
-  QArchive::DisExtractor::started
-  QArchive::DisExtractor::progress
-  QArchive::DisExtractor::error
-  QArchive::DisExtractor::finished
+QArchive::DisExtractor::started
+QArchive::DisExtractor::progress
+QArchive::DisExtractor::error
+QArchive::DisExtractor::finished
 ```
 
 ## LICENSE
