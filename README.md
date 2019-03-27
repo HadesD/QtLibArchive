@@ -9,6 +9,7 @@ It can help you extract/compress almost of archive file type.
 - Portable
 - Backward-compatible
 - Lightweight (~300KB static build)
+- Single/Multi - Thread support
 
 ## Requirements
 
