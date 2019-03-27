@@ -1,12 +1,7 @@
 #ifndef QARCHIVE_HPP
 #define QARCHIVE_HPP
 
-
-class QArchive
-{
-
-  public:
-    QArchive();
-};
+#include "DiskExtractor.hpp"
+#include "DiskCompressor.hpp"
 
 #endif // QARCHIVE_HPP
