@@ -32,10 +32,10 @@ extractor->start();
 ### Signals
 
 ```cpp
-QArchive::DisExtractor::started
-QArchive::DisExtractor::progress
-QArchive::DisExtractor::error
-QArchive::DisExtractor::finished
+void QArchive::DisExtractor::started()
+void QArchive::DisExtractor::progress(const QString& fileName, const std::size_t current, const std::size_t total)
+void QArchive::DisExtractor::error(const StatusCode code, const QString& fileName)
+void QArchive::DisExtractor::finished()
 ```
 
 ## LICENSE
