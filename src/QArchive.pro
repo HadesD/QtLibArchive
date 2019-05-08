@@ -27,25 +27,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 LIBS += -L$$PWD/../bin/lib
 
-DEFINES += LIBARCHIVE_STATIC
+include(QArchive.pri)
+
 INCLUDEPATH += $$PWD/../deps/libarchive
 DEPENDPATH += $$PWD/../deps/libarchive
 
-LIBS += -larchive # -lzlib -lliblzma
-
 # Source code
 
-SOURCES += \
-    DiskExtractor.cpp \
-    DiskCompressor.cpp \
-    Log.cpp
-
-HEADERS += \
-        ../include/QArchive \
-    DiskExtractor.hpp \
-    DiskCompressor.hpp \
-    Log.hpp
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+DISTFILES += \
+  QArchive.pri
