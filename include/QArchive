@@ -1,7 +1,7 @@
 #ifndef QARCHIVE_HPP
 #define QARCHIVE_HPP
 
-#include "DiskExtractor.hpp"
-#include "DiskCompressor.hpp"
+#include "../src/DiskExtractor.hpp"
+#include "../src/DiskCompressor.hpp"
 
 #endif // QARCHIVE_HPP
