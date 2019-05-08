@@ -90,8 +90,11 @@ namespace QArchive
     }
 
     int ret = ARCHIVE_OK;
+#if _WIN32
+#define archive_read_open_filename archive_read_open_filename_w
+#endif
     ret = archive_read_open_filename(
-          m_archiveRead, m_archiveFileName.toLatin1(), m_blockSize
+          m_archiveRead, m_archiveFileName.toStdWString().c_str(), m_blockSize
           );
     if (ret != ARCHIVE_OK)
     {
