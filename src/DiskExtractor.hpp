@@ -24,6 +24,7 @@ namespace QArchive
         LIBARCHIVE_READ_ERROR,
         LIBARCHIVE_WRITE_ERROR,
         LIBARCHIVE_FILE_CORRUPTED,
+        LIBARCHIVE_WRONG_PASSWORD,
       };
 
     public:
@@ -35,6 +36,7 @@ namespace QArchive
       void start();
       void setArchiveFileName(const QString& fileName);
       void setOutputPath(const QString& outputPath);
+      void setPassword(const QString& password);
 
     private:
       void emitError(const StatusCode code, const QString& errorString);
@@ -63,6 +65,7 @@ namespace QArchive
       archive* m_archiveRead = nullptr;
 
       std::size_t m_blockSize = 10240;
+      QString m_password;
   };
 
   QString statusCodeToString(const DiskExtractor::StatusCode code);

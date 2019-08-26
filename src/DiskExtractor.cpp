@@ -15,8 +15,6 @@ namespace QArchive
   {
     LOG_DEBUG(__FUNCTION__ << "called");
 
-//    this->moveToThread(&m_extractThread);
-
     m_archiveRead = archive_read_new();
     archive_read_support_format_all(m_archiveRead);
     archive_read_support_compression_all(m_archiveRead);
@@ -24,6 +22,7 @@ namespace QArchive
     connect(&m_extractThread, &QThread::started, [=](){
       this->startExtract();
     });
+
     connect(&m_extractThread, &QThread::finished, this, &DiskExtractor::finished);
   }
 
@@ -44,6 +43,11 @@ namespace QArchive
     m_outputPath = outputPath;
   }
 
+  void DiskExtractor::setPassword(const QString &password)
+  {
+    m_password = password;
+  }
+
   bool DiskExtractor::hasError() const
   {
     return m_hasError;
@@ -54,7 +58,7 @@ namespace QArchive
     LOG_DEBUG(__FUNCTION__ << static_cast<short>(code) << errorString);
 
     m_hasError = true;
-    emit this->error(code, errorString);
+    Q_EMIT this->error(code, errorString);
   }
 
   void DiskExtractor::start()
@@ -67,7 +71,7 @@ namespace QArchive
   {
     LOG_DEBUG(__FUNCTION__ << QThread::currentThread());
 
-    emit this->started();
+    Q_EMIT this->started();
 
     if (!QFile::exists(m_archiveFileName))
     {
@@ -88,6 +92,12 @@ namespace QArchive
         return;
       }
     }
+
+#if ARCHIVE_VERSION_NUMBER >= 3003003
+    if(!m_password.isEmpty()) {
+        archive_read_add_passphrase(m_archiveRead, m_password.toLatin1().constData());
+    }
+#endif
 
     int ret = ARCHIVE_OK;
 #if _WIN32
@@ -133,19 +143,20 @@ namespace QArchive
     QDir outputDir(outputFilePath);
     if (!outputDir.mkpath(".."))
     {
-      this->emitError(StatusCode::FILE_NOT_EXISTS, outputFilePath);
+      this->emitError(StatusCode::DIR_NOT_EXISTS, outputFilePath);
       return false;
     }
 
-    if (entryPath[std::strlen(entryPath) - 1] == '/')
+    // Is Dir
+    if (archive_entry_filetype(entry) == AE_IFDIR)
     {
-      emit this->progress(entryPath, 100, 100);
+      Q_EMIT this->progress(entryPath, 100, 100);
       return true;
     }
     QFile hOutputFile(outputFilePath);
     if (!hOutputFile.open(QIODevice::WriteOnly))
     {
-      this->emitError(StatusCode::FILE_NOT_EXISTS, outputFilePath);
+      this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, outputFilePath);
       return false;
     }
 
@@ -168,7 +179,7 @@ namespace QArchive
         break;
       }
 
-      emit this->progress(entryPath, totalReadSize, entrySize);
+      Q_EMIT this->progress(entryPath, totalReadSize, entrySize);
 
       LOG_DEBUG(__FUNCTION__ << "read" << totalReadSize);
     }
