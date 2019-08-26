@@ -25,6 +25,7 @@ namespace QArchive
         LIBARCHIVE_WRITE_ERROR,
         LIBARCHIVE_FILE_CORRUPTED,
         LIBARCHIVE_WRONG_PASSWORD,
+        NOT_ENOUGH_MEMORY,
       };
 
     public:
@@ -65,7 +66,6 @@ namespace QArchive
       archive* m_archiveRead = nullptr;
 
       std::size_t m_blockSize = 10240;
-      QString m_password;
   };
 
   QString statusCodeToString(const DiskExtractor::StatusCode code);

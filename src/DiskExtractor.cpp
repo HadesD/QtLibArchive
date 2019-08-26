@@ -45,7 +45,7 @@ namespace QArchive
 
   void DiskExtractor::setPassword(const QString &password)
   {
-    m_password = password;
+    archive_read_add_passphrase(m_archiveRead, password.toLatin1().constData());
   }
 
   bool DiskExtractor::hasError() const
@@ -92,12 +92,6 @@ namespace QArchive
         return;
       }
     }
-
-#if ARCHIVE_VERSION_NUMBER >= 3003003
-    if(!m_password.isEmpty()) {
-        archive_read_add_passphrase(m_archiveRead, m_password.toLatin1().constData());
-    }
-#endif
 
     int ret = ARCHIVE_OK;
 #if _WIN32
