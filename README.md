@@ -26,6 +26,7 @@ It can help you extract/compress almost of archive file type.
 auto extractor = new QArchive::DiskExtractor(this);
 extractor->setArchiveFileName(fileName);
 extractor->setOutputPath(QDir::currentPath());
+extractor->setPassword("ThisIsExtractPassword");
 extractor->start();
 ```
 
