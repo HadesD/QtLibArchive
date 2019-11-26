@@ -1,6 +1,6 @@
 DEFINES += LIBARCHIVE_STATIC
 
-LIBS += -larchive # -lzlib -lliblzma
+#LIBS += -larchive # -lzlib -lliblzma
 
 SOURCES += \
     DiskExtractor.cpp \
