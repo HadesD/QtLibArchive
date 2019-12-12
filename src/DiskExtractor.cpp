@@ -121,7 +121,7 @@ namespace QArchive
 
       if (!this->writeEntry(entry))
       {
-        break;
+        continue;
       }
     }
 
