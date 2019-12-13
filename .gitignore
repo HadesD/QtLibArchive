@@ -3,6 +3,8 @@
 compile_commands.json
 *.exe.bin
 *.exe
+src/debug
+src/release
 
 # C++ objects and libs
 
