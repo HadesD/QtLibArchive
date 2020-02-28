@@ -16,7 +16,7 @@ namespace QArchive
     LOG_DEBUG(__FUNCTION__ << "called");
 
     m_archiveRead = archive_read_new();
-    archive_read_support_format_all(m_archiveRead);
+    archive_read_support_format_raw(m_archiveRead);
     archive_read_support_compression_all(m_archiveRead);
 
     connect(&m_extractThread, &QThread::started, [=](){
@@ -137,7 +137,7 @@ namespace QArchive
     QDir outputDir(outputFilePath);
     if (!outputDir.mkpath(".."))
     {
-      this->emitError(StatusCode::DIR_NOT_EXISTS, outputFilePath);
+      this->emitError(StatusCode::DIR_NOT_EXISTS, "Mkpath: " + outputFilePath);
       return false;
     }
 
@@ -150,26 +150,35 @@ namespace QArchive
     QFile hOutputFile(outputFilePath);
     if (!hOutputFile.open(QIODevice::WriteOnly))
     {
-      this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, outputFilePath);
+      this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, "Open: " + outputFilePath);
       return false;
     }
 
-    auto entrySize = static_cast<std::size_t>(archive_entry_size(entry));
+    auto entrySize = archive_entry_size(entry);
     LOG_DEBUG(__FUNCTION__ << entryPath << entrySize);
-    std::size_t totalReadSize = 0;
-    constexpr std::size_t bufferSize = 1024000 * 20; // 20MB
-    char* buff = new char[bufferSize];
+    int totalReadSize = 0;
+    constexpr int bufferSize = 1024000 * 20; // 20MB
+    auto bSize = bufferSize > entrySize ? entrySize : bufferSize;
+    uchar* buff = new uchar[bSize];
     bool writeSuccessed = true;
     while (totalReadSize < entrySize)
     {
-      auto readSize = static_cast<std::size_t>(
-            archive_read_data(m_archiveRead, buff, bufferSize)
+      auto readSize = static_cast<int>(
+            archive_read_data(m_archiveRead, buff, bSize)
             );
-      totalReadSize += readSize;
-      if (readSize != hOutputFile.write(buff, readSize))
+
+      if (readSize < 0)
       {
         writeSuccessed = false;
-        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, outputFilePath);
+        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, "Write_1: " + outputFilePath + " " + QString::number(readSize) + "/" + QString::number(entrySize) + " " + QString::number(totalReadSize));
+        break;
+      }
+
+      totalReadSize += readSize;
+      if (readSize != hOutputFile.write(reinterpret_cast<char*>(buff), readSize))
+      {
+        writeSuccessed = false;
+        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, "Write_2: " + outputFilePath + " " + QString::number(readSize) + "/" + QString::number(entrySize) + " " + QString::number(totalReadSize));
         break;
       }
 
