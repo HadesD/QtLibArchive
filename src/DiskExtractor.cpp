@@ -17,7 +17,8 @@ namespace QArchive
 
     m_archiveRead = archive_read_new();
     archive_read_support_format_all(m_archiveRead);
-    archive_read_support_compression_all(m_archiveRead);
+//    archive_read_support_compression_all(m_archiveRead);
+    archive_read_support_filter_all(m_archiveRead);
 
     connect(&m_extractThread, &QThread::started, [=](){
       this->startExtract();
@@ -178,7 +179,7 @@ namespace QArchive
       if (readSize != hOutputFile.write(reinterpret_cast<char*>(buff), readSize))
       {
         writeSuccessed = false;
-        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, outputFilePath);
+        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, "Write: " + outputFilePath);
         break;
       }
 
