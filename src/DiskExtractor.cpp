@@ -16,7 +16,7 @@ namespace QArchive
     LOG_DEBUG(__FUNCTION__ << "called");
 
     m_archiveRead = archive_read_new();
-    archive_read_support_format_raw(m_archiveRead);
+    archive_read_support_format_all(m_archiveRead);
     archive_read_support_compression_all(m_archiveRead);
 
     connect(&m_extractThread, &QThread::started, [=](){
@@ -102,7 +102,7 @@ namespace QArchive
           );
     if (ret != ARCHIVE_OK)
     {
-      this->emitError(StatusCode::LIBARCHIVE_READ_ERROR, m_archiveFileName);
+      this->emitError(StatusCode::LIBARCHIVE_READ_ERROR, archive_error_string(m_archiveRead));
       m_extractThread.quit();
       return;
     }
@@ -170,7 +170,7 @@ namespace QArchive
       if (readSize < 0)
       {
         writeSuccessed = false;
-        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, "Write_1: " + outputFilePath + " " + QString::number(readSize) + "/" + QString::number(entrySize) + " " + QString::number(totalReadSize));
+        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, archive_error_string(m_archiveRead));
         break;
       }
 
@@ -178,7 +178,7 @@ namespace QArchive
       if (readSize != hOutputFile.write(reinterpret_cast<char*>(buff), readSize))
       {
         writeSuccessed = false;
-        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, "Write_2: " + outputFilePath + " " + QString::number(readSize) + "/" + QString::number(entrySize) + " " + QString::number(totalReadSize));
+        this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, outputFilePath);
         break;
       }
 
