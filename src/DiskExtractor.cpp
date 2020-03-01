@@ -172,6 +172,7 @@ namespace QArchive
       {
         writeSuccessed = false;
         this->emitError(StatusCode::LIBARCHIVE_WRITE_ERROR, archive_error_string(m_archiveRead));
+
         break;
       }
 
