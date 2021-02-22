@@ -23,19 +23,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG(debug, debug|release) {
-  CONFIGURATION = Debug
-} else {
-  CONFIGURATION = Release
-}
+# Add user custom dir
+INCLUDEPATH += $$[QT_INSTALL_PREFIX]/include.usr
+LIBS += -L$$[QT_INSTALL_PREFIX]/lib.usr
 
-# Libraries and Dependencies settings
-
-#LIBS += -L$$PWD/../bin/lib
-
-DLLDESTDIR = "$$PWD/../../lib/$$CONFIGURATION/"
-
-QMAKE_POST_LINK += "copy \"$$OUT_PWD/$(DESTDIR_TARGET)\" \"$$PWD/../../lib/$$CONFIGURATION/\""
+CONFIG(release, debug|release):CONFIG -= console
+CONFIG(debug, debug|release):TARGET = $${TARGET}d
 
 include(QArchive.pri)
 
@@ -43,7 +36,6 @@ INCLUDEPATH += $$PWD/../deps/libarchive
 DEPENDPATH += $$PWD/../deps/libarchive
 
 # Source code
-
 unix {
     target.path = /usr/lib
     INSTALLS += target
